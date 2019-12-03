@@ -1,0 +1,5 @@
+com/example/Customer$1.class
+com/example/Customer$Builder.class
+com/example/Customer.class
+no/safebase/KafkaAvroProducerV1.class
+no/safebase/KafkaAvroConsumerV1.class

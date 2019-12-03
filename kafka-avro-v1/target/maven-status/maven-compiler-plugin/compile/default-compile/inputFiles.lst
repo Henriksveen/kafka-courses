@@ -1,0 +1,3 @@
+/home/henriksveen/code/kafka/kafka-beginners-course/kafka-avro-v1/src/main/java/no/safebase/KafkaAvroProducerV1.java
+/home/henriksveen/code/kafka/kafka-beginners-course/kafka-avro-v1/src/main/java/no/safebase/KafkaAvroConsumerV1.java
+/home/henriksveen/code/kafka/kafka-beginners-course/kafka-avro-v1/target/generated-sources/avro/com/example/Customer.java
