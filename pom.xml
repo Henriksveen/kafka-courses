@@ -17,6 +17,7 @@
         <module>kafka-avro-v1</module>
         <module>kafka-avro-v2</module>
         <module>kafka-streams</module>
+        <module>user-event-enricher</module>
     </modules>
 
     <properties>
