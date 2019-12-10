@@ -26,4 +26,4 @@ HELP.md
 /build/
 
 spooldir-example
-/kafka-streams/target/
+/*/target/

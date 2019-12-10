@@ -5,6 +5,7 @@ import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
+import org.apache.kafka.streams.Topology;
 import org.apache.kafka.streams.kstream.*;
 
 import java.util.Arrays;
@@ -26,19 +27,9 @@ public class WordCount {
         // https://cwiki.apache.org/confluence/display/KAFKA/Kafka+Streams+Application+Reset+Tool
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 
-        final StreamsBuilder builder = new StreamsBuilder();
+        WordCount wordCount = new WordCount();
 
-        final KStream<String, String> source = builder.stream("streams-plaintext-input");
-
-        final KTable<String, Long> counts = source
-                .flatMapValues(value -> Arrays.asList(value.toLowerCase().split(" ")))
-                .groupBy((key, value) -> value)
-                .count();
-
-        // need to override value serde to Long type
-        counts.toStream().to("streams-wordcount-output", Produced.with(Serdes.String(), Serdes.Long()));
-
-        final KafkaStreams streams = new KafkaStreams(builder.build(), props);
+        final KafkaStreams streams = new KafkaStreams(wordCount.createTopology(), props);
         final CountDownLatch latch = new CountDownLatch(1);
 
         // attach shutdown handler to catch control-c
@@ -57,5 +48,20 @@ public class WordCount {
             System.exit(1);
         }
         System.exit(0);
+    }
+
+    public Topology createTopology() {
+        final StreamsBuilder builder = new StreamsBuilder();
+
+        final KStream<String, String> source = builder.stream("streams-plaintext-input");
+
+        final KTable<String, Long> counts = source
+                .flatMapValues(value -> Arrays.asList(value.toLowerCase().split(" ")))
+                .groupBy((key, value) -> value)
+                .count();
+
+        // need to override value serde to Long type
+        counts.toStream().to("streams-wordcount-output", Produced.with(Serdes.String(), Serdes.Long()));
+        return builder.build();
     }
 }
