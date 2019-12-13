@@ -18,6 +18,7 @@
         <module>kafka-avro-v2</module>
         <module>kafka-streams</module>
         <module>user-event-enricher</module>
+        <module>nobill-stream-app</module>
     </modules>
 
     <properties>
