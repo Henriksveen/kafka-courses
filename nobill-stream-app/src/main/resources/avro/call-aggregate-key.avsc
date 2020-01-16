@@ -1,0 +1,13 @@
+{
+  "namespace" : "no.safebase.nobill.model",
+  "name" : "CallAggregateKey",
+  "type" : "record",
+  "doc" : "Avro schema for Call Aggregate Key",
+  "fields": [
+      {"name": "agg_time", "type": ["null","long"], "default": null},
+      {"name": "time_unit", "type": ["null","string"], "default": null},
+      {"name": "call_type", "type": ["null","int"],  "default": null, "doc": "Call type indicator. 0 Originating voice, 1 Terminating voice, 2 Forwarded voice, 3 Originating data, 4 Terminating data, 5 Forwarded data, 8 Originating fax, 9 Terminating fax, 10 Forwarded fax, 14 Originating collect, 15 Terminating collect" },
+      {"name": "termination_reason", "type": ["null","int"],  "default": null, "doc": "Call termination reason, also for unsuccessful calls:0 Unspecified, 1 Abandon, 2 Route select failure, 3 Busy, 4 No answer, 5 Not reachable, 6 Calling party disconnect, 7 Called party disconnect, 8 Service release, 9 Reservation timeout, 10 Partial commit. For partial commits, all records have termination reason “Partial commit” except for the last one." },
+      {"name": "rate_plan_name", "type": ["null","string"],  "default": null, "doc": "Name of rate plan used to rate call." }
+  ]
+}

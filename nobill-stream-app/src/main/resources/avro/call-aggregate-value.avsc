@@ -1,0 +1,11 @@
+{
+  "namespace" : "no.safebase.nobill.model",
+  "name" : "CallAggregateValue",
+  "type" : "record",
+  "doc" : "Avro schema for Call Aggregate Value",
+  "fields": [
+      { "name": "calls", "type": ["null","long"],  "default": null, "doc": "Nr. of calls" },
+      { "name": "cost", "type": ["null","double"],  "default": null, "doc": "Cost for call, in specified currency. Cost is the sum of initial cost and minutecost and is tax inclusive." },
+      { "name": "duration", "type": ["null","long"],  "default": null, "doc": "Call duration, in milliseconds." }
+  ]
+}
