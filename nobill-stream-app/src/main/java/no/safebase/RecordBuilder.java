@@ -23,11 +23,8 @@ public class RecordBuilder {
     }
 
     public static CallAggregateKey CallAggregateKey(CallAggregateKey key) {
-        return CallAggregateKey.newBuilder()
+        return CallAggregateKey.newBuilder(key)
                 .setAggTime(Instant.ofEpochMilli(key.getAggTime()).atZone(zoneId).truncatedTo(ChronoUnit.DAYS).toEpochSecond() * 1000L)
-                .setCallType(key.getCallType())
-                .setTerminationReason(key.getTerminationReason())
-                .setRatePlanName(key.getRatePlanName().trim())
                 .build();
     }
 }

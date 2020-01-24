@@ -1,31 +1,22 @@
 package no.safebase.serde;
 
-import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig;
 import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde;
-import no.safebase.AppConfig;
-import org.apache.avro.specific.SpecificRecord;
+import no.safebase.nobill.model.CallAggregateKey;
+import no.safebase.nobill.model.CallAggregateValue;
+import no.safebase.nobill.model.CallRecordKey;
+import no.safebase.nobill.model.CallRecordValue;
+import org.apache.kafka.common.serialization.Serde;
+import org.apache.kafka.streams.kstream.Windowed;
 
-import java.util.HashMap;
-import java.util.Map;
+public interface NobillSerdes {
 
-public class NobillSerdes implements AppSerdes {
+    SpecificAvroSerde<CallRecordKey> CallRecordKey();
 
-    @Override
-    public <T extends SpecificRecord> SpecificAvroSerde<T> getKeySerde() {
-        return getSerde(true);
-    }
+    SpecificAvroSerde<CallRecordValue> CallRecordValue();
 
-    @Override
-    public <T extends SpecificRecord> SpecificAvroSerde<T> getValueSerde() {
-        return getSerde(false);
-    }
+    SpecificAvroSerde<CallAggregateKey> CallAggregateKey();
 
-    private <T extends SpecificRecord> SpecificAvroSerde<T> getSerde(boolean isKey) {
-        SpecificAvroSerde<T> serde = new SpecificAvroSerde<>();
-        Map<String, Object> config = new HashMap<>();
+    Serde<Windowed<CallAggregateKey>> WindowedCallAggregateKey(Long windowSize);
 
-        config.put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, AppConfig.SCHEMA_REGISTRY);
-        serde.configure(config, isKey);
-        return serde;
-    }
+    SpecificAvroSerde<CallAggregateValue> CallAggregateValue();
 }
