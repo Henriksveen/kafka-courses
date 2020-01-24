@@ -19,6 +19,7 @@
         <module>kafka-streams</module>
         <module>user-event-enricher</module>
         <module>nobill-stream-app</module>
+        <module>nobill-sink-connector</module>
     </modules>
 
     <properties>
