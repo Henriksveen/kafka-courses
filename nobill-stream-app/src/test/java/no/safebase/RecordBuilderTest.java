@@ -28,7 +28,7 @@ class RecordBuilderTest {
         CallAggregateKey aggregateKey = RecordBuilder.CallAggregateKey(value);
 
         assertAll(
-                () -> assertEquals(1578988800000L, aggregateKey.getAggTime()),
+                () -> assertEquals(1578988800000L, aggregateKey.getPeriodStart()),
                 () -> assertEquals(1, aggregateKey.getCallType()),
                 () -> assertEquals("Rate Plan Name", aggregateKey.getRatePlanName()),
                 () -> assertEquals(1, aggregateKey.getTerminationReason())
@@ -46,7 +46,7 @@ class RecordBuilderTest {
                 .setCallType(1)
                 .setTerminationReason(1)
                 .setRatePlanName("Rate Plan Name")
-                .setAggTime(hourMillis) // 2020:01:14 09:00 GMT+0100
+                .setPeriodStart(hourMillis) // 2020:01:14 09:00 GMT+0100
                 .build();
 
 
@@ -55,7 +55,7 @@ class RecordBuilderTest {
         CallAggregateKey aggregateKey = RecordBuilder.CallAggregateKey(value.key());
 
         assertAll(
-                () -> assertEquals(dayMillis, aggregateKey.getAggTime()),
+                () -> assertEquals(dayMillis, aggregateKey.getPeriodStart()),
                 () -> assertEquals(1, aggregateKey.getCallType()),
                 () -> assertEquals("Rate Plan Name", aggregateKey.getRatePlanName()),
                 () -> assertEquals(1, aggregateKey.getTerminationReason())

@@ -81,6 +81,10 @@ public class AppTopology {
                 .stream(AppConfig.NOBILL_CALL_RECORD_TOPIC,
                         Consumed.with(AppSerdes.CallRecordKey(), AppSerdes.CallRecordValue()));
 
+        KStream<CallRecordKey, CallRecordValue> KS_3 = streamsBuilder
+                .stream("REFERENCE",
+                        Consumed.with(AppSerdes.CallRecordKey(), AppSerdes.CallRecordValue()));
+
         KTable<CallAggregateKey, CallAggregateValue> KT_0 = KS_0
                 .groupBy((k, v) -> RecordBuilder.CallAggregateKey(v), Grouped.with(AppSerdes.CallAggregateKey(), AppSerdes.CallRecordValue()))
                 .aggregate(
@@ -95,6 +99,7 @@ public class AppTopology {
                                 .withValueSerde(AppSerdes.CallAggregateValue())
                 );
 
+        KT_0.toStream().print(Printed.<CallAggregateKey, CallAggregateValue>toSysOut().withLabel("HOUR"));
         KT_0.toStream()
                 .to(AppConfig.NOBILL_CALL_RECORD_HOUR_TOPIC, Produced.with(AppSerdes.CallAggregateKey(), AppSerdes.CallAggregateValue()));
     }
@@ -125,6 +130,7 @@ public class AppTopology {
                                 .withKeySerde(AppSerdes.CallAggregateKey())
                                 .withValueSerde(AppSerdes.CallAggregateValue())
                 );
+        KT_1.toStream().print(Printed.<CallAggregateKey, CallAggregateValue>toSysOut().withLabel("DAY"));
         KT_1.toStream().to(AppConfig.NOBILL_CALL_RECORD_DAY_TOPIC, Produced.with(AppSerdes.CallAggregateKey(), AppSerdes.CallAggregateValue()));
     }
 }

@@ -1,20 +1,16 @@
 package no.safebase;
 
-import no.safebase.utils.VersionUtil;
 import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.connect.connector.Task;
-import org.apache.kafka.connect.sink.SinkConnector;
+import org.apache.kafka.connect.source.SourceConnector;
 
 import java.util.List;
 import java.util.Map;
 
-public class MySinkConnector extends SinkConnector {
-
-    private MySinkConnectorConfig config;
-
+public class MySourceConnector extends SourceConnector {
     @Override
     public void start(Map<String, String> props) {
-        this.config = new MySinkConnectorConfig(props);
+
     }
 
     @Override
@@ -39,6 +35,6 @@ public class MySinkConnector extends SinkConnector {
 
     @Override
     public String version() {
-        return VersionUtil.getVersion();
+        return null;
     }
 }

@@ -98,7 +98,7 @@ class AppTopologyTest {
 
     private void assertKeyValue(KeyValue<CallAggregateKey, CallAggregateValue> record, long aggTime, double cost, long calls, long duration) {
         assertAll(
-                () -> assertEquals(aggTime, record.key.getAggTime()),
+                () -> assertEquals(aggTime, record.key.getPeriodStart()),
                 () -> assertEquals(cost, record.value.getCost()),
                 () -> assertEquals(calls, record.value.getCalls()),
                 () -> assertEquals(duration, record.value.getDuration())

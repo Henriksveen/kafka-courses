@@ -13,6 +13,7 @@ services:
     volumes:
       - /home/henriksveen/code/kafka/kafka-beginners-course/spooldir-example/kafka-connect-spooldir:/connectors/kafka-connect-spooldir
       - /home/henriksveen/code/kafka/kafka-beginners-course/spooldir-example:/example/spooldir
+      - /home/henriksveen/code/kafka/kafka-beginners-course/nobill-sink-connector/target/nobill-sink-connector-1.0-SNAPSHOT-package/share/java/nobill-sink-connector:/connectors/nobill-sink-connector
     ports:
       - 2181:2181                 # Zookeeper
       - 3030:3030                 # Landoop UI

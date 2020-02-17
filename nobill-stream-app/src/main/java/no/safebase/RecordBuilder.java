@@ -15,7 +15,7 @@ public class RecordBuilder {
     public static CallAggregateKey CallAggregateKey(CallRecordValue value) {
         long epoch = DateUtils.toEpoch(value.getStarttime());
         return CallAggregateKey.newBuilder()
-                .setAggTime(Instant.ofEpochMilli(epoch).atZone(zoneId).truncatedTo(ChronoUnit.HOURS).toEpochSecond() * 1000L)
+                .setPeriodStart(Instant.ofEpochMilli(epoch).atZone(zoneId).truncatedTo(ChronoUnit.HOURS).toEpochSecond() * 1000L)
                 .setCallType(value.getCalltype())
                 .setTerminationReason(value.getTerminationreason())
                 .setRatePlanName(value.getRateplanname().trim())
@@ -24,7 +24,7 @@ public class RecordBuilder {
 
     public static CallAggregateKey CallAggregateKey(CallAggregateKey key) {
         return CallAggregateKey.newBuilder(key)
-                .setAggTime(Instant.ofEpochMilli(key.getAggTime()).atZone(zoneId).truncatedTo(ChronoUnit.DAYS).toEpochSecond() * 1000L)
+                .setPeriodStart(Instant.ofEpochMilli(key.getPeriodStart()).atZone(zoneId).truncatedTo(ChronoUnit.DAYS).toEpochSecond() * 1000L)
                 .build();
     }
 }
