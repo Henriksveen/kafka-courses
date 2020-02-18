@@ -1,0 +1,12 @@
+{
+  "namespace" : "no.safebase.nobill.model",
+  "name" : "SmsAggregateKey",
+  "type" : "record",
+  "doc" : "Avro schema for Sms Aggregate Key",
+  "fields": [
+      {"name": "period_start", "type": ["null","long"], "default": null, "doc": "Period start for granularity aggregation"},
+      {"name": "call_type", "type": ["null","int"],  "default": null, "doc": "Type indicator. Value Description: 6=Originating short message, 7=Terminating short message" },
+      {"name": "rate_plan_name", "type": ["null","string"],  "default": null, "doc": "Name of rate plan used to rate short message." },
+      {"name": "subscription_type_name", "type": ["null","string"],  "default": null, "doc": "Name of the subscription type of the served subscription." }
+  ]
+}

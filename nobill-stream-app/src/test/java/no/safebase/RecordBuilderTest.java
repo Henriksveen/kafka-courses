@@ -2,8 +2,8 @@ package no.safebase;
 
 import no.safebase.nobill.model.CallAggregateKey;
 import no.safebase.nobill.model.CallRecordValue;
-import org.apache.kafka.streams.kstream.Windowed;
-import org.apache.kafka.streams.kstream.internals.TimeWindow;
+import no.safebase.nobill.model.SmsAggregateKey;
+import no.safebase.nobill.model.SmsRecordValue;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -49,16 +49,59 @@ class RecordBuilderTest {
                 .setPeriodStart(hourMillis) // 2020:01:14 09:00 GMT+0100
                 .build();
 
-
-        Windowed<CallAggregateKey> value = new Windowed<>(hourKey, new TimeWindow(hourMillis, hourMillis * 60 * 60 * 1000));
-
-        CallAggregateKey aggregateKey = RecordBuilder.CallAggregateKey(value.key());
+        CallAggregateKey aggregateKey = RecordBuilder.CallAggregateKey(hourKey);
 
         assertAll(
                 () -> assertEquals(dayMillis, aggregateKey.getPeriodStart()),
                 () -> assertEquals(1, aggregateKey.getCallType()),
                 () -> assertEquals("Rate Plan Name", aggregateKey.getRatePlanName()),
                 () -> assertEquals(1, aggregateKey.getTerminationReason())
+        );
+    }
+
+    @Test
+    @DisplayName("Test that keu selector parse correctly from SmsRecordValue")
+    void smsAggregateKey() {
+        SmsRecordValue value = SmsRecordValue.newBuilder()
+                .setInternalreferenceid("123")
+                .setCalltype(1)
+                .setTerminationreason(1)
+                .setSubscriptiontypename("Type")
+                .setRateplanname("Rate Plan Name")
+                .setCost(2.0)
+                .setCreationtime("20200114091500")
+                .build();
+
+        SmsAggregateKey aggregateKey = RecordBuilder.SmsAggregateKey(value);
+
+        assertAll(
+                () -> assertEquals(1578988800000L, aggregateKey.getPeriodStart()),
+                () -> assertEquals(1, aggregateKey.getCallType()),
+                () -> assertEquals("Rate Plan Name", aggregateKey.getRatePlanName()),
+                () -> assertEquals("Type", aggregateKey.getSubscriptionTypeName())
+        );
+    }
+
+    @Test
+    @DisplayName("Test that keu selector parse correctly from SmsAggregateKey")
+    void smsAggregateKey2() {
+        long hourMillis = 1578988800000L; // 2020:01:14 09:00 GMT+0100
+        long dayMillis = 1578956400000L; // 2020:01:14 00:00 GMT+0100
+
+        SmsAggregateKey hourKey = SmsAggregateKey.newBuilder()
+                .setCallType(1)
+                .setSubscriptionTypeName("Type")
+                .setRatePlanName("Rate Plan Name")
+                .setPeriodStart(hourMillis) // 2020:01:14 09:00 GMT+0100
+                .build();
+
+        SmsAggregateKey aggregateKey = RecordBuilder.SmsAggregateKey(hourKey);
+
+        assertAll(
+                () -> assertEquals(dayMillis, aggregateKey.getPeriodStart()),
+                () -> assertEquals(1, aggregateKey.getCallType()),
+                () -> assertEquals("Rate Plan Name", aggregateKey.getRatePlanName()),
+                () -> assertEquals("Type", aggregateKey.getSubscriptionTypeName())
         );
     }
 }

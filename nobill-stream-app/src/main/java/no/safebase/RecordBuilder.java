@@ -2,6 +2,8 @@ package no.safebase;
 
 import no.safebase.nobill.model.CallAggregateKey;
 import no.safebase.nobill.model.CallRecordValue;
+import no.safebase.nobill.model.SmsAggregateKey;
+import no.safebase.nobill.model.SmsRecordValue;
 import no.safebase.utils.DateUtils;
 
 import java.time.Instant;
@@ -24,6 +26,22 @@ public class RecordBuilder {
 
     public static CallAggregateKey CallAggregateKey(CallAggregateKey key) {
         return CallAggregateKey.newBuilder(key)
+                .setPeriodStart(Instant.ofEpochMilli(key.getPeriodStart()).atZone(zoneId).truncatedTo(ChronoUnit.DAYS).toEpochSecond() * 1000L)
+                .build();
+    }
+
+    public static SmsAggregateKey SmsAggregateKey(SmsRecordValue value) {
+        long epoch = DateUtils.toEpoch(value.getCreationtime());
+        return SmsAggregateKey.newBuilder()
+                .setPeriodStart(Instant.ofEpochMilli(epoch).atZone(zoneId).truncatedTo(ChronoUnit.HOURS).toEpochSecond() * 1000L)
+                .setCallType(value.getCalltype())
+                .setSubscriptionTypeName(value.getSubscriptiontypename())
+                .setRatePlanName(value.getRateplanname().trim())
+                .build();
+    }
+
+    public static SmsAggregateKey SmsAggregateKey(SmsAggregateKey key) {
+        return SmsAggregateKey.newBuilder(key)
                 .setPeriodStart(Instant.ofEpochMilli(key.getPeriodStart()).atZone(zoneId).truncatedTo(ChronoUnit.DAYS).toEpochSecond() * 1000L)
                 .build();
     }

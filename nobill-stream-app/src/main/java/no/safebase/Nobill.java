@@ -1,6 +1,7 @@
 package no.safebase;
 
 import no.safebase.serde.AppSerdes;
+import no.safebase.topologies.AppTopology;
 import no.safebase.utils.QueryServer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.streams.*;
@@ -34,7 +35,8 @@ public class Nobill {
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 
         StreamsBuilder streamsBuilder = new StreamsBuilder();
-        AppTopology.withBuilder(streamsBuilder, new AppSerdes());
+        AggregateType type = AggregateType.valueOf(AppConfig.AGGREGATE_TYPE);
+        AppTopology.withBuilder(streamsBuilder, new AppSerdes(), type);
 
         final KafkaStreams streams = new KafkaStreams(streamsBuilder.build(), props);
 

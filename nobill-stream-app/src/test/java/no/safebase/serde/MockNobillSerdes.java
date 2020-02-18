@@ -5,11 +5,8 @@ import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig;
 import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde;
 import no.safebase.AppConfig;
 import no.safebase.nobill.model.CallAggregateKey;
-import no.safebase.nobill.model.CallAggregateValue;
-import no.safebase.nobill.model.CallRecordKey;
-import no.safebase.nobill.model.CallRecordValue;
+import org.apache.avro.specific.SpecificRecord;
 import org.apache.kafka.common.serialization.Serde;
-import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.kstream.Windowed;
 import org.apache.kafka.streams.kstream.WindowedSerdes;
 
@@ -25,8 +22,8 @@ public class MockNobillSerdes implements NobillSerdes {
     }
 
     @Override
-    public SpecificAvroSerde<CallRecordKey> CallRecordKey() {
-        SpecificAvroSerde<CallRecordKey> serde = new SpecificAvroSerde<>(registry);
+    public <T extends SpecificRecord> SpecificAvroSerde<T> Key() {
+        SpecificAvroSerde<T> serde = new SpecificAvroSerde<>(registry);
         Map<String, Object> config = new HashMap<>();
 
         config.put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, AppConfig.SCHEMA_REGISTRY);
@@ -35,8 +32,8 @@ public class MockNobillSerdes implements NobillSerdes {
     }
 
     @Override
-    public SpecificAvroSerde<CallRecordValue> CallRecordValue() {
-        SpecificAvroSerde<CallRecordValue> serde = new SpecificAvroSerde<>(registry);
+    public <T extends SpecificRecord> SpecificAvroSerde<T> Value() {
+        SpecificAvroSerde<T> serde = new SpecificAvroSerde<>(registry);
         Map<String, Object> config = new HashMap<>();
 
         config.put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, AppConfig.SCHEMA_REGISTRY);
@@ -44,32 +41,50 @@ public class MockNobillSerdes implements NobillSerdes {
         return serde;
     }
 
-    @Override
-    public SpecificAvroSerde<CallAggregateKey> CallAggregateKey() {
-        SpecificAvroSerde<CallAggregateKey> serde = new SpecificAvroSerde<>(registry);
-        Map<String, Object> config = new HashMap<>();
+    /*  @Override
+      public SpecificAvroSerde<NobillRecordKey> NobillRecordKey() {
+          SpecificAvroSerde<NobillRecordKey> serde = new SpecificAvroSerde<>(registry);
+          Map<String, Object> config = new HashMap<>();
 
-        config.put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, AppConfig.SCHEMA_REGISTRY);
-        serde.configure(config, true);
-        return serde;
-    }
+          config.put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, AppConfig.SCHEMA_REGISTRY);
+          serde.configure(config, true);
+          return serde;
+      }
 
+      @Override
+      public SpecificAvroSerde<CallRecordValue> CallRecordValue() {
+          SpecificAvroSerde<CallRecordValue> serde = new SpecificAvroSerde<>(registry);
+          Map<String, Object> config = new HashMap<>();
+
+          config.put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, AppConfig.SCHEMA_REGISTRY);
+          serde.configure(config, false);
+          return serde;
+      }
+
+      @Override
+      public SpecificAvroSerde<CallAggregateKey> CallAggregateKey() {
+          SpecificAvroSerde<CallAggregateKey> serde = new SpecificAvroSerde<>(registry);
+          Map<String, Object> config = new HashMap<>();
+
+          config.put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, AppConfig.SCHEMA_REGISTRY);
+          serde.configure(config, true);
+          return serde;
+      }
+
+      @Override
+      public SpecificAvroSerde<CallAggregateValue> CallAggregateValue() {
+          SpecificAvroSerde<CallAggregateValue> serde = new SpecificAvroSerde<>(registry);
+          Map<String, Object> config = new HashMap<>();
+
+          config.put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, AppConfig.SCHEMA_REGISTRY);
+          serde.configure(config, false);
+          return serde;
+      }*/
     @Override
     public Serde<Windowed<CallAggregateKey>> WindowedCallAggregateKey(Long windowSize) {
-        Serde<Windowed<CallAggregateKey>> windowedSerde = new WindowedSerdes.TimeWindowedSerde<>(CallAggregateKey(), windowSize);
+        Serde<Windowed<CallAggregateKey>> windowedSerde = new WindowedSerdes.TimeWindowedSerde<>(Key(), windowSize);
         Map<String, Object> config = new HashMap<>();
         windowedSerde.configure(config, true);
         return windowedSerde;
-    }
-
-
-    @Override
-    public SpecificAvroSerde<CallAggregateValue> CallAggregateValue() {
-        SpecificAvroSerde<CallAggregateValue> serde = new SpecificAvroSerde<>(registry);
-        Map<String, Object> config = new HashMap<>();
-
-        config.put(AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, AppConfig.SCHEMA_REGISTRY);
-        serde.configure(config, false);
-        return serde;
     }
 }

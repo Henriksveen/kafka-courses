@@ -1,8 +1,8 @@
 {
   "namespace" : "no.safebase.nobill.model",
-  "name" : "CallRecordKey",
+  "name" : "NobillRecordKey",
   "type" : "record",
-  "doc" : "Avro schema for Call Record Key",
+  "doc" : "Avro schema for Nobill Record Key",
   "fields": [
       { "name": "internalreferenceid", "type": "string", "doc": "Unique record identifier." }
   ]

@@ -1,22 +1,16 @@
 package no.safebase.serde;
 
 import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde;
-import no.safebase.nobill.model.CallAggregateKey;
-import no.safebase.nobill.model.CallAggregateValue;
-import no.safebase.nobill.model.CallRecordKey;
-import no.safebase.nobill.model.CallRecordValue;
+import no.safebase.nobill.model.*;
+import org.apache.avro.specific.SpecificRecord;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.streams.kstream.Windowed;
 
 public interface NobillSerdes {
 
-    SpecificAvroSerde<CallRecordKey> CallRecordKey();
+    <T extends SpecificRecord> SpecificAvroSerde<T> Key();
 
-    SpecificAvroSerde<CallRecordValue> CallRecordValue();
-
-    SpecificAvroSerde<CallAggregateKey> CallAggregateKey();
+    <T extends SpecificRecord> SpecificAvroSerde<T> Value();
 
     Serde<Windowed<CallAggregateKey>> WindowedCallAggregateKey(Long windowSize);
-
-    SpecificAvroSerde<CallAggregateValue> CallAggregateValue();
 }
