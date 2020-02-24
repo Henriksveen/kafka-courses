@@ -1,0 +1,15 @@
+{
+  "namespace" : "no.safebase.nobill.model",
+  "name" : "PadsAggregateKey",
+  "type" : "record",
+  "doc" : "Avro schema for PADS Aggregate Key",
+  "fields": [
+      {"name": "period_start", "type": ["null","long"], "default": null, "doc": "Period start for granularity aggregation"},
+      {"name": "call_type", "type": ["null","int"],  "default": null, "doc": "Type indicator. Value Description: 6=Originating short message, 7=Terminating short message" },
+      {"name": "termination_reason", "type": ["null","int"],  "default": null, "doc": "PADS termination reason codes: Value Description: 0=Reason unspecified, 1=Normal commit, 2=Partial commit, 3=Network disconnect, 4=Low balance, 5=Reservation reason unknown, 6=Not used, 7=Usage limit. For partial commits, all records have termination reason “Partial commit” except for the last one which typically has termination reason “Normal commit”." },
+      {"name": "rate_plan_name", "type": ["null","string"],  "default": null, "doc": "Name of rate plan used to rate short message." },
+      {"name": "subscription_type_name", "type": ["null","string"],  "default": null, "doc": "Name of the subscription type of the served subscription." },
+      {"name": "sgsn_address", "type": ["null","string"],  "default": null, "doc": "Address of serving SGSN, used for location analysis." },
+      {"name": "apn", "type": ["null","string"],  "default": null, "doc": "APN attached to by subscriber." }
+  ]
+}

@@ -15,6 +15,9 @@ public class AppTopology {
             case SMS:
                 topology = new SmsTopology();
                 break;
+            case PADS:
+                topology = new PadsTopology();
+                break;
             default:
                 throw new NotImplementedException();
         }

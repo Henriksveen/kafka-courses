@@ -1,5 +1,0 @@
-kafka-topics --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 3 --topic nobill-call-record
-kafka-topics --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 3 --topic nobill-call-record-hour
-kafka-topics --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 3 --topic nobill-call-record-day
-
-kafka-streams-application-reset --application-id nobill-extract-step --input-topics nobill-call-record,nobill-call-record-day,nobill-call-record-day --bootstrap-servers localhost:9092

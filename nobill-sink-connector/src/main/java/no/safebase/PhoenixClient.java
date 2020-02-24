@@ -7,6 +7,8 @@ import org.apache.kafka.connect.data.Schema;
 import org.apache.kafka.connect.data.Struct;
 import org.apache.kafka.connect.sink.SinkRecord;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.*;
 import java.sql.Date;
 import java.util.*;
@@ -40,7 +42,7 @@ public class PhoenixClient {
         }
     }
 
-    public void execute(String table, RecordBuffer buffer) {
+    public void execute(String topic, RecordBuffer buffer) {
         long l = System.currentTimeMillis();
         Counter<String> counter = new Counter<>();
         try {
@@ -50,12 +52,12 @@ public class PhoenixClient {
                 Struct keyStruct = (Struct) record.key();
                 Struct valueStruct = (Struct) record.value();
 
-                String query = formUpsert(keySchema, valueSchema, valueStruct, table.toUpperCase().replace('-', '_'));
+                String query = formUpsert(keySchema, valueSchema, valueStruct, topic.toUpperCase().replace('-', '_'));
                 PreparedStatement ps = getStatement(query);
 
                 formStatement(ps, keySchema, valueSchema, keyStruct, valueStruct);
                 ps.addBatch();
-                if (counter.count(table) % batchSize == 0) {
+                if (counter.count(topic) % batchSize == 0) {
                     ps.executeBatch();
                     connection.commit();
                     ps.clearBatch();
@@ -171,8 +173,28 @@ public class PhoenixClient {
 //        call_type varchar  not null,
 //        termination_reason varchar  not null,
 //        rate_plan_name varchar not null,
-//        calls bigint,
+//        call_count bigint,
 //        cost double,
 //        duration bigint,
 //        CONSTRAINT pk PRIMARY KEY (period_start row_timestamp,call_type,termination_reason,rate_plan_name))
 //        COMPRESSION='SNAPPY',SALT_BUCKETS=4, UPDATE_CACHE_FREQUENCY=900000, COLUMN_ENCODED_BYTES=3,BLOOMFILTER='ROW';
+
+
+//   create table NOBILL.NOBILL_PADS_RECORD_HOUR (
+//       period_start date not null,
+//       call_type integer  not null,
+//       termination_reason integer  not null,
+//       rate_plan_name varchar not null,
+//       subscription_type_name varchar not null,
+//       sgsn_address varchar not null,
+//       apn varchar not null,
+//       pads_count bigint,
+//       cost double,
+//       duration bigint,
+//       data_volume_sent bigint,
+//       data_volume_received bigint,
+//       used_quota bigint,
+//       charged_quota bigint,
+//       quota_unit integer,
+//       CONSTRAINT pk PRIMARY KEY (period_start row_timestamp,call_type,termination_reason,rate_plan_name,subscription_type_name,sgsn_address,apn))
+//       COMPRESSION='SNAPPY',SALT_BUCKETS=4, UPDATE_CACHE_FREQUENCY=900000, COLUMN_ENCODED_BYTES=3,BLOOMFILTER='ROW';
