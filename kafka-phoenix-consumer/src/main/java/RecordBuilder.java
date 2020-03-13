@@ -10,7 +10,11 @@ public class RecordBuilder {
     public GenericRecord extractRecord(Schema schema, ResultSet rs) throws SQLException {
         GenericRecordBuilder builder = new GenericRecordBuilder(schema);
         for (Schema.Field f : schema.getFields()) {
-            Schema.Type type = f.schema().getTypes().get(f.schema().getTypes().size() -1).getType();
+            Object value = rs.getObject(f.name());
+            if (rs.wasNull())
+                continue;
+//            builder.set(f, value);
+            Schema.Type type = f.schema().getTypes().get(f.schema().getTypes().size() - 1).getType();
             switch (type) {
                 case STRING:
                     builder.set(f, rs.getString(f.name()));

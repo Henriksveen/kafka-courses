@@ -17,6 +17,7 @@ public class ConfigParser {
     public static String SCHEMA_NAME_KEY_CONFIG = "schema.name.key";
     public static String SCHEMA_NAME_VALUE_CONFIG = "schema.name.value";
     public static String PRIMARY_KEYS_CONFIG = "primary.keys";
+    public static String TABLE_NAME_CONFIG = "table.name";
 
     private static final Logger log = LoggerFactory.getLogger(ConfigParser.class);
 
@@ -64,6 +65,10 @@ public class ConfigParser {
 
         if (properties.getProperty(PRIMARY_KEYS_CONFIG) == null) {
             log.info("{} is required! [column1,column2,column3]", PRIMARY_KEYS_CONFIG);
+            throw new IllegalArgumentException();
+        }
+        if (properties.getProperty(TABLE_NAME_CONFIG) == null) {
+            log.info("{} is required! [table_name]", TABLE_NAME_CONFIG);
             throw new IllegalArgumentException();
         }
 
