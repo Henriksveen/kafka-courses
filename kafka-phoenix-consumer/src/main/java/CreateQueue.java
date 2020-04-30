@@ -26,15 +26,15 @@ public class CreateQueue {
         try {
             Connection connection = getConnection();
             PreparedStatement ps = connection.prepareStatement("UPSERT INTO KAFKA.PRODUCER_QUEUE (TABLE_NAME, START_TIME, END_TIME) VALUES (?,?,?)");
-            ZonedDateTime from = Instant.ofEpochMilli(toEpoch("2018-11-01 00:00:00")).atZone(ZoneId.of("Europe/Oslo"));
-            ZonedDateTime max = Instant.ofEpochMilli(toEpoch("2020-03-10 00:00:00")).atZone(ZoneId.of("Europe/Oslo"));
+            ZonedDateTime from = Instant.ofEpochMilli(toEpoch("2018-10-01 00:00:00")).atZone(ZoneId.of("Europe/Oslo"));
+            ZonedDateTime max = Instant.ofEpochMilli(toEpoch("2020-04-27 00:00:00")).atZone(ZoneId.of("Europe/Oslo"));
 
-            int interval = 100;
+            int interval = 1;
 
             while (from.isBefore(max)) {
                 ZonedDateTime to = from.plusDays(interval);
 
-                ps.setString(1, "TUNNEL.TUNNEL_COVERAGE_AGGREGATE_MONTH");
+                ps.setString(1, "FEED.DEVICE_RATS_BANDS_DAY");
                 ps.setDate(2, new Date(from.toEpochSecond() * 1000));
                 ps.setDate(3, new Date(to.toEpochSecond() * 1000));
                 ps.addBatch();

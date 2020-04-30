@@ -6,7 +6,7 @@ import java.util.Queue;
 public class TableQueue {
 
     private boolean done = false;
-    private Queue<Table> queue = new LinkedList<>();
+    private final Queue<Table> queue = new LinkedList<>();
 
     public boolean isDone() {
         return done;
@@ -34,9 +34,9 @@ public class TableQueue {
 
     public static class Table {
 
-        private Date startTime;
-        private Date endTime;
-        private String tableName;
+        private final Date startTime;
+        private final Date endTime;
+        private final String tableName;
         private Date producerStartTime;
         private Date producerEndTime;
         private long totalTime;

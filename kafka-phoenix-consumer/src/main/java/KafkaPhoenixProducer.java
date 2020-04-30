@@ -42,7 +42,13 @@ public class KafkaPhoenixProducer {
 
         while (!phoenixClient.isDone()) {
             try {
-                ResultSet rs = phoenixClient.nextResultSet();
+                ResultSet rs;
+                if (properties.getProperty(ConfigParser.QUERY_CONFIG) != null)
+                    rs = phoenixClient.customResultSet(properties.getProperty(ConfigParser.QUERY_CONFIG));
+                else
+                    rs = phoenixClient.nextResultSet();
+
+
                 if (rs != null) {
                     Schema keySchema = SchemaMapping.keySchema(schemaNameKey, rs.getMetaData(), primaryKeys);
                     Schema valueSchema = SchemaMapping.valueSchema(schemaNameValue, rs.getMetaData(), primaryKeys);
@@ -57,8 +63,11 @@ public class KafkaPhoenixProducer {
                         producer.send(producerRecord);
                     }
                     logger.info("Produced {} records", i);
-                    phoenixClient.archive();
+                    if (properties.getProperty(ConfigParser.QUERY_CONFIG) == null)
+                        phoenixClient.archive();
+                    rs.close();
                 }
+
             } catch (SQLException e) {
                 logger.error("", e);
                 throw new RuntimeException(e);

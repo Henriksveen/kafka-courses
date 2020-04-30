@@ -3,6 +3,7 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.time.Instant;
+import java.time.ZoneId;
 import java.util.Properties;
 
 public class PhoenixClient {
@@ -24,8 +25,10 @@ public class PhoenixClient {
             logger.info("Configure Phoenix Connection");
             Class.forName("org.apache.phoenix.jdbc.PhoenixDriver");
             final Properties props = new Properties();
-            props.setProperty("hbase.rpc.timeout", "150000");
+            props.setProperty("hbase.rpc.timeout", "600000");
             props.setProperty("hbase.client.scanner.max.result.size", "10000000");
+            props.setProperty("hbase.client.scanner.timeout.period", "6000000");
+            props.setProperty("phoenix.query.timeoutMs", "6000000");
             this.connection = DriverManager.getConnection(String.format("jdbc:phoenix:%s:/hbase-unsecure", properties.getProperty(ConfigParser.HBASE_ZOOKEEPER_QUORUM_CONFIG_CONFIG)), props);
             this.connection.setAutoCommit(false);
         } catch (SQLException | ClassNotFoundException e) {
@@ -37,7 +40,8 @@ public class PhoenixClient {
     public void preparedStatementIfNotNull(TableQueue.Table table) throws SQLException {
         if (ps != null)
             return;
-        ps = connection.prepareStatement(String.format("SELECT * FROM %s WHERE MEASTIME >= ? AND  MEASTIME <= ? ", table.getTableName()));
+        String timeField = properties.getProperty(ConfigParser.PRIMARY_KEYS_CONFIG).split(",")[0];
+        ps = connection.prepareStatement(String.format("SELECT * FROM %s WHERE %s >= ? AND  %s < ? ", table.getTableName(), timeField, timeField));
     }
 
     public ResultSet nextResultSet() throws SQLException {
@@ -48,7 +52,9 @@ public class PhoenixClient {
 
         if (table != null) {
             preparedStatementIfNotNull(table);
-            logger.info("Get data from {} to {}", table.getStartTime(), table.getEndTime());
+            logger.info("Get data from {} to {}",
+                    Instant.ofEpochMilli(table.getStartTime().getTime()).atZone(ZoneId.of("Europe/Oslo")),
+                    Instant.ofEpochMilli(table.getEndTime().getTime()).atZone(ZoneId.of("Europe/Oslo")));
             ps.setDate(1, table.getStartTime());
             ps.setDate(2, table.getEndTime());
 
@@ -62,9 +68,10 @@ public class PhoenixClient {
 
     private void fillQueue() throws SQLException {
         String tableName = properties.getProperty(ConfigParser.TABLE_NAME_CONFIG);
-        logger.info("QUERY: SELECT * FROM KAFKA.PRODUCER_QUEUE WHERE TABLE_NAME = '{}' ORDER BY END_TIME DESC LIMIT 25", tableName);
+        logger.info("QUERY: SELECT * FROM KAFKA.PRODUCER_QUEUE WHERE TABLE_NAME = '{}' AND STATUS IS NULL ORDER BY END_TIME DESC LIMIT 25", tableName);
         queue.setDone(false);
-        PreparedStatement ps = connection.prepareStatement("SELECT * FROM KAFKA.PRODUCER_QUEUE WHERE TABLE_NAME = ? ORDER BY END_TIME DESC LIMIT 25");
+        PreparedStatement ps = connection.prepareStatement("SELECT * FROM KAFKA.PRODUCER_QUEUE WHERE TABLE_NAME = ? AND STATUS IS NULL ORDER BY END_TIME DESC LIMIT 25");
+        PreparedStatement updateStatus = connection.prepareStatement("UPSERT INTO KAFKA.PRODUCER_QUEUE (TABLE_NAME, START_TIME, END_TIME, STATUS) VALUES (?,?,?,?)");
         ps.setString(1, properties.getProperty(ConfigParser.TABLE_NAME_CONFIG));
         ResultSet rs = ps.executeQuery();
         while (rs.next()) {
@@ -73,7 +80,17 @@ public class PhoenixClient {
             TableQueue.Table table = new TableQueue.Table(from, to, tableName);
             logger.debug("ADD {} to queue", table);
             queue.add(table);
+
+            updateStatus.setString(1, tableName);
+            updateStatus.setDate(2, from);
+            updateStatus.setDate(3, to);
+            updateStatus.setString(4, "SYNCING");
+            updateStatus.addBatch();
         }
+        updateStatus.executeBatch();
+        connection.commit();
+        updateStatus.clearBatch();
+
         logger.info("Queue-size: {}", queue.size());
     }
 
@@ -110,5 +127,11 @@ public class PhoenixClient {
         } catch (SQLException e) {
             logger.error("", e);
         }
+    }
+
+    public ResultSet customResultSet(String query) throws SQLException {
+        ps = connection.prepareStatement(query);
+        queue.setDone(true);
+        return ps.executeQuery();
     }
 }

@@ -17,7 +17,9 @@ public class ConfigParser {
     public static String SCHEMA_NAME_KEY_CONFIG = "schema.name.key";
     public static String SCHEMA_NAME_VALUE_CONFIG = "schema.name.value";
     public static String PRIMARY_KEYS_CONFIG = "primary.keys";
+    public static String TIME_FIELD_CONFIG = "time.field";
     public static String TABLE_NAME_CONFIG = "table.name";
+    public static String QUERY_CONFIG = "query";
 
     private static final Logger log = LoggerFactory.getLogger(ConfigParser.class);
 
@@ -67,8 +69,14 @@ public class ConfigParser {
             log.info("{} is required! [column1,column2,column3]", PRIMARY_KEYS_CONFIG);
             throw new IllegalArgumentException();
         }
-        if (properties.getProperty(TABLE_NAME_CONFIG) == null) {
-            log.info("{} is required! [table_name]", TABLE_NAME_CONFIG);
+
+        if (properties.getProperty(TIME_FIELD_CONFIG) == null) {
+            log.info("{} is required! [time_field] - typical the row_timestamp column", TIME_FIELD_CONFIG);
+            throw new IllegalArgumentException();
+        }
+
+        if (properties.getProperty(TABLE_NAME_CONFIG) == null && properties.getProperty(QUERY_CONFIG) == null) {
+            log.info("Either {} or {} is required!", TABLE_NAME_CONFIG, QUERY_CONFIG);
             throw new IllegalArgumentException();
         }
 

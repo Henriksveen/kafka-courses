@@ -59,8 +59,6 @@ public class SchemaMapping {
                 builder.optionalInt(columnName);
                 break;
             case Types.BIGINT:
-                builder.optionalLong(columnName);
-                break;
             case Types.DATE:
                 builder.optionalLong(columnName);
                 break;

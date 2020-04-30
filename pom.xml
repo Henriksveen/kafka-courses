@@ -18,9 +18,9 @@
         <module>kafka-avro-v2</module>
         <module>kafka-streams</module>
         <module>user-event-enricher</module>
-        <module>nobill-stream-app</module>
         <module>nobill-sink-connector</module>
         <module>kafka-phoenix-consumer</module>
+        <module>phoenix-5.0</module>
     </modules>
 
     <properties>

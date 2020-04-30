@@ -49,26 +49,7 @@
             <version>${lombok.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.phoenix</groupId>
-            <artifactId>phoenix-client</artifactId>
-            <version>${phoenix.version}</version>
-            <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.glassfish.jersey.core</groupId>
-                    <artifactId>jersey-server</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.glassfish.jersey.containers</groupId>
-                    <artifactId>jersey-container-servlet-core</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.glassfish.web</groupId>
-                    <artifactId>javax.servlet.jsp</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+
     </dependencies>
 
     <repositories>
